@@ -17,7 +17,7 @@
 
     async function fetchSeriesData() {
       try {
-        const response = await fetch('https://sheets.googleapis.com/v4/spreadsheets/15zoCNcy-A5TYZWFSaXn129JWUm9HzjMWr70Pda3GaTI/values/Sheet1!A1:I100?key=YOUR_API_KEY');
+        const response = await fetch('https://sheets.googleapis.com/v4/spreadsheets/15zoCNcy-A5TYZWFSaXn129JWUm9HzjMWr70Pda3GaTI/values/Sheet1!A1:I100?key=AIzaSyB5WTjIR5OZt108xl9uQApzeoNRWuMyYRE');
         const data = await response.json();
         return data.values.slice(1); // Skip the header row
       } catch (error) {
