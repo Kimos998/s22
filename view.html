@@ -1,4 +1,3 @@
-<!-- view.html -->
 <!DOCTYPE html>
 <html>
 <head>
@@ -6,6 +5,7 @@
 </head>
 <body>
     <h1 id="seriesName"></h1>
+    <video id="videoPlayer" controls></video>
     <ul id="episodeList"></ul>
 
     <script>
@@ -14,26 +14,27 @@
 
         document.getElementById('seriesName').innerText = seriesName;
 
-        // Function to fetch series data from Google Sheets
         async function fetchSeriesData() {
             const response = await fetch('https://sheets.googleapis.com/v4/spreadsheets/15zoCNcy-A5TYZWFSaXn129JWUm9HzjMWr70Pda3GaTI/values/Sheet1!A1:I100?key=AIzaSyB5WTjIR5OZt108xl9uQApzeoNRWuMyYRE');
             const data = await response.json();
-            return data.values;
+            return data.values.slice(1); // تجاوز السطر الأول الذي يحتوي على عناوين الأعمدة
         }
 
-        // Function to display episodes
         async function displayEpisodes() {
             const seriesData = await fetchSeriesData();
             const episodes = seriesData.filter(row => row[1] === seriesName);
 
             const episodeList = document.getElementById('episodeList');
-            episodeList.innerHTML = '';
 
             episodes.forEach(episode => {
                 const listItem = document.createElement('li');
                 const link = document.createElement('a');
                 link.innerText = episode[2];
                 link.href = episode[3];
+                link.onclick = function(event) {
+                    event.preventDefault();
+                    document.getElementById('videoPlayer').src = episode[3];
+                };
                 listItem.appendChild(link);
                 episodeList.appendChild(listItem);
             });
@@ -43,3 +44,4 @@
     </script>
 </body>
 </html>
+
