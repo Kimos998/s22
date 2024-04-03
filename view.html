@@ -1,48 +1,56 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>عرض المسلسل</title>
-<link rel="stylesheet" href="style.css">
-
+  <title>عرض المسلسل</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <h1 id="seriesName"></h1>
-    <video id="videoPlayer" controls></video>
-    <ul id="episodeList"></ul>
+  <h1 id="seriesName"></h1>
+  <video id="videoPlayer" controls></video>
+  <ul id="episodeList"></ul>
 
-    <script>
-        const urlParams = new URLSearchParams(window.location.search);
-        const seriesName = urlParams.get('series');
+  <script>
+    const urlParams = new URLSearchParams(window.location.search);
+    const seriesName = urlParams.get('series');
 
-        document.getElementById('seriesName').innerText = seriesName;
+    document.getElementById('seriesName').innerText = seriesName;
 
-        async function fetchSeriesData() {
-            const response = await fetch('https://sheets.googleapis.com/v4/spreadsheets/15zoCNcy-A5TYZWFSaXn129JWUm9HzjMWr70Pda3GaTI/values/Sheet1!A1:I100?key=YOUR_API_KEY');
-            const data = await response.json();
-            return data.values.slice(1); // تجاوز السطر الأول الذي يحتوي على عناوين الأعمدة
-        }
+    async function fetchSeriesData() {
+      try {
+        const response = await fetch('https://sheets.googleapis.com/v4/spreadsheets/15zoCNcy-A5TYZWFSaXn129JWUm9HzjMWr70Pda3GaTI/values/Sheet1!A1:I100?key=YOUR_API_KEY');
+        const data = await response.json();
+        return data.values.slice(1); // Skip the header row
+      } catch (error) {
+        console.error('Error fetching series data:', error);
+        // Handle the error gracefully, e.g., display an error message to the user
+      }
+    }
 
-        async function displayEpisodes() {
-            const seriesData = await fetchSeriesData();
-            const episodes = seriesData.filter(row => row[1] === seriesName);
+    async function displayEpisodes() {
+      const seriesData = await fetchSeriesData();
 
-            const episodeList = document.getElementById('episodeList');
+      if (!seriesData) {
+        return; // Handle the case where data fetching fails
+      }
 
-            episodes.forEach(episode => {
-                const listItem = document.createElement('li');
-                const link = document.createElement('a');
-                link.innerText = episode[2];
-                link.href = episode[3];
-                link.onclick = function(event) {
-                    event.preventDefault();
-                    document.getElementById('videoPlayer').src = episode[3];
-                };
-                listItem.appendChild(link);
-                episodeList.appendChild(listItem);
-            });
-        }
+      const episodes = seriesData.filter(row => row[1] === seriesName);
+      const episodeList = document.getElementById('episodeList');
 
-        displayEpisodes();
-    </script>
+      episodes.forEach(episode => {
+        const listItem = document.createElement('li');
+        const link = document.createElement('a');
+        link.innerText = episode[2];
+        link.href = episode[3];
+        link.onclick = function(event) {
+          event.preventDefault();
+          document.getElementById('videoPlayer').src = episode[3];
+        };
+        listItem.appendChild(link);
+        episodeList.appendChild(listItem);
+      });
+    }
+
+    displayEpisodes();
+  </script>
 </body>
 </html>
