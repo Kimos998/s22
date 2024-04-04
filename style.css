@@ -55,3 +55,7 @@ a:hover {
   color: #000; /* Black text on hover */
   font-weight: bold;
 }
+#seriesList li:hover {
+            color: darkgray; /* تغيير لون النص عند التمرير فوقه */
+            cursor: pointer; /* تغيير شكل المؤشر عند التمرير */
+        }
